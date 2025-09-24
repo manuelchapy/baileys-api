@@ -472,20 +472,20 @@ class WhatsAppController {
       for (const message of messageData.messages) {
         console.log('🔍 Debug - Procesando mensaje individual:', JSON.stringify(message, null, 2));
         
-        // Extraer el número real del remitente
-        let sender = message.key.remoteJid;
-        let senderName = message.pushName || 'Usuario';
-        
-        // Si es un mensaje de grupo, usar el participante real
-        if (message.key.participant) {
-          sender = message.key.participant;
-          // Extraer solo el número del participante (remover @lid)
-          const participantNumber = message.key.participant.split('@')[0];
-          sender = `${participantNumber}@s.whatsapp.net`;
-        }
-        
-        const timestamp = message.messageTimestamp;
-        const isFromMe = message.key.fromMe;
+          // Extraer el número real del remitente
+          let sender = message.key.remoteJid;
+          let senderName = message.pushName || 'Usuario';
+          
+          // Si es un mensaje de grupo, usar el participante real
+          if (message.key.participant) {
+            sender = message.key.participant;
+            // Extraer solo el número del participante (remover @lid)
+            const participantNumber = message.key.participant.split('@')[0];
+            sender = `${participantNumber}@s.whatsapp.net`;
+          }
+          
+          const timestamp = message.messageTimestamp;
+          const isFromMe = message.key.fromMe;
 
         // No procesar mensajes de la API misma
         if (isFromMe) {
@@ -498,29 +498,48 @@ class WhatsAppController {
         // Procesar mensajes de texto
         if (message.message?.conversation || message.message?.extendedTextMessage?.text) {
           const messageText = message.message.conversation || message.message.extendedTextMessage?.text;
-          
+
           console.log('🔍 Debug - Mensaje de texto detectado:');
           console.log('🔍 Debug - Texto:', messageText);
           console.log('🔍 Debug - Remitente:', sender);
           console.log('🔍 Debug - Nombre:', senderName);
 
           messageInfo = {
-            id: message.key.id,
-            text: messageText,
-            sender: sender,
-            senderName: senderName,
-            timestamp: timestamp,
-            isFromMe: isFromMe,
-            type: 'text',
-            receivedAt: new Date().toISOString()
-          };
+              id: message.key.id,
+              text: messageText,
+              sender: sender,
+              senderName: senderName,
+              timestamp: timestamp,
+              isFromMe: isFromMe,
+              type: 'text',
+              receivedAt: new Date().toISOString()
+            };
         }
         // Procesar mensajes de imagen
         else if (message.message?.imageMessage) {
           console.log('🔍 Debug - Mensaje de imagen detectado');
           
           try {
-            const imageBuffer = await this.socket.downloadMediaMessage(message.message.imageMessage);
+            // Usar la API correcta para Baileys 6.4.0
+            let imageBuffer;
+            if (typeof this.socket.downloadMediaMessage === 'function') {
+              imageBuffer = await this.socket.downloadMediaMessage(message.message.imageMessage);
+            } else if (typeof this.socket.downloadAndSaveMediaMessage === 'function') {
+              imageBuffer = await this.socket.downloadAndSaveMediaMessage(message.message.imageMessage);
+            } else {
+              // Método alternativo para versiones más antiguas
+              const { downloadMediaMessage } = require('@whiskeysockets/baileys');
+              imageBuffer = await downloadMediaMessage(
+                message.message.imageMessage,
+                'buffer',
+                {},
+                {
+                  logger: this.logger,
+                  reuploadRequest: this.socket.updateMediaMessage
+                }
+              );
+            }
+            
             const imageBase64 = imageBuffer.toString('base64');
             
             messageInfo = {
@@ -573,7 +592,27 @@ class WhatsAppController {
             }
 
             console.log('🔍 Debug - Iniciando descarga de audio...');
-            const audioBuffer = await this.socket.downloadMediaMessage(message.message.audioMessage);
+            
+            // Usar la API correcta para Baileys 6.4.0
+            let audioBuffer;
+            if (typeof this.socket.downloadMediaMessage === 'function') {
+              audioBuffer = await this.socket.downloadMediaMessage(message.message.audioMessage);
+            } else if (typeof this.socket.downloadAndSaveMediaMessage === 'function') {
+              audioBuffer = await this.socket.downloadAndSaveMediaMessage(message.message.audioMessage);
+            } else {
+              // Método alternativo para versiones más antiguas
+              const { downloadMediaMessage } = require('@whiskeysockets/baileys');
+              audioBuffer = await downloadMediaMessage(
+                message.message.audioMessage,
+                'buffer',
+                {},
+                {
+                  logger: this.logger,
+                  reuploadRequest: this.socket.updateMediaMessage
+                }
+              );
+            }
+            
             console.log('🔍 Debug - Audio descargado, tamaño:', audioBuffer.length, 'bytes');
             
             const audioBase64 = audioBuffer.toString('base64');
@@ -636,7 +675,26 @@ class WhatsAppController {
           console.log('🔍 Debug - Mensaje de video detectado');
           
           try {
-            const videoBuffer = await this.socket.downloadMediaMessage(message.message.videoMessage);
+            // Usar la API correcta para Baileys 6.4.0
+            let videoBuffer;
+            if (typeof this.socket.downloadMediaMessage === 'function') {
+              videoBuffer = await this.socket.downloadMediaMessage(message.message.videoMessage);
+            } else if (typeof this.socket.downloadAndSaveMediaMessage === 'function') {
+              videoBuffer = await this.socket.downloadAndSaveMediaMessage(message.message.videoMessage);
+            } else {
+              // Método alternativo para versiones más antiguas
+              const { downloadMediaMessage } = require('@whiskeysockets/baileys');
+              videoBuffer = await downloadMediaMessage(
+                message.message.videoMessage,
+                'buffer',
+                {},
+                {
+                  logger: this.logger,
+                  reuploadRequest: this.socket.updateMediaMessage
+                }
+              );
+            }
+            
             const videoBase64 = videoBuffer.toString('base64');
             
             messageInfo = {
@@ -682,7 +740,26 @@ class WhatsAppController {
           console.log('🔍 Debug - Mensaje de documento detectado');
           
           try {
-            const docBuffer = await this.socket.downloadMediaMessage(message.message.documentMessage);
+            // Usar la API correcta para Baileys 6.4.0
+            let docBuffer;
+            if (typeof this.socket.downloadMediaMessage === 'function') {
+              docBuffer = await this.socket.downloadMediaMessage(message.message.documentMessage);
+            } else if (typeof this.socket.downloadAndSaveMediaMessage === 'function') {
+              docBuffer = await this.socket.downloadAndSaveMediaMessage(message.message.documentMessage);
+            } else {
+              // Método alternativo para versiones más antiguas
+              const { downloadMediaMessage } = require('@whiskeysockets/baileys');
+              docBuffer = await downloadMediaMessage(
+                message.message.documentMessage,
+                'buffer',
+                {},
+                {
+                  logger: this.logger,
+                  reuploadRequest: this.socket.updateMediaMessage
+                }
+              );
+            }
+            
             const docBase64 = docBuffer.toString('base64');
             
             messageInfo = {
@@ -730,13 +807,13 @@ class WhatsAppController {
         if (messageInfo) {
           console.log('📨 Procesando mensaje:', messageInfo.type, messageInfo.text);
 
-          // Enviar webhook si está configurado
-          if (this.webhookUrl) {
-            console.log('🔍 Debug - Enviando webhook a:', this.webhookUrl);
-            await this.sendWebhook(messageInfo);
-          } else {
-            console.log('🔍 Debug - No hay webhook configurado');
-          }
+            // Enviar webhook si está configurado
+            if (this.webhookUrl) {
+              console.log('🔍 Debug - Enviando webhook a:', this.webhookUrl);
+              await this.sendWebhook(messageInfo);
+            } else {
+              console.log('🔍 Debug - No hay webhook configurado');
+            }
         }
       }
     } catch (error) {
