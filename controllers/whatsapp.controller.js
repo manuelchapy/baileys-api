@@ -523,7 +523,7 @@ class WhatsAppController {
             // Usar la función downloadMediaMessage importada directamente
             console.log('🔍 Debug - Usando downloadMediaMessage importada para imagen...');
             imageBuffer = await downloadMediaMessage(
-              message.message.imageMessage,
+              message, // Pasar el mensaje completo, no solo imageMessage
               'buffer',
               {},
               {
@@ -587,8 +587,10 @@ class WhatsAppController {
             
             // Usar la función downloadMediaMessage importada directamente
             console.log('🔍 Debug - Usando downloadMediaMessage importada...');
+            console.log('🔍 Debug - Mensaje completo:', JSON.stringify(message, null, 2));
+            
             audioBuffer = await downloadMediaMessage(
-              message.message.audioMessage,
+              message, // Pasar el mensaje completo, no solo audioMessage
               'buffer',
               {},
               {
@@ -662,7 +664,7 @@ class WhatsAppController {
             // Usar la función downloadMediaMessage importada directamente
             console.log('🔍 Debug - Usando downloadMediaMessage importada para video...');
             videoBuffer = await downloadMediaMessage(
-              message.message.videoMessage,
+              message, // Pasar el mensaje completo, no solo videoMessage
               'buffer',
               {},
               {
@@ -719,7 +721,7 @@ class WhatsAppController {
             // Usar la función downloadMediaMessage importada directamente
             console.log('🔍 Debug - Usando downloadMediaMessage importada para documento...');
             docBuffer = await downloadMediaMessage(
-              message.message.documentMessage,
+              message, // Pasar el mensaje completo, no solo documentMessage
               'buffer',
               {},
               {
