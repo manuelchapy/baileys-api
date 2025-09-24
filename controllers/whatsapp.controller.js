@@ -1,4 +1,4 @@
-const { default: makeWASocket, DisconnectReason, useMultiFileAuthState } = require('@whiskeysockets/baileys');
+const { default: makeWASocket, DisconnectReason, useMultiFileAuthState, downloadMediaMessage } = require('@whiskeysockets/baileys');
 const { Boom } = require('@hapi/boom');
 const QRCode = require('qrcode');
 const fs = require('fs-extra');
@@ -520,25 +520,17 @@ class WhatsAppController {
           console.log('🔍 Debug - Mensaje de imagen detectado');
           
           try {
-            // Usar la API correcta para Baileys 6.4.0
-            let imageBuffer;
-            if (typeof this.socket.downloadMediaMessage === 'function') {
-              imageBuffer = await this.socket.downloadMediaMessage(message.message.imageMessage);
-            } else if (typeof this.socket.downloadAndSaveMediaMessage === 'function') {
-              imageBuffer = await this.socket.downloadAndSaveMediaMessage(message.message.imageMessage);
-            } else {
-              // Método alternativo para versiones más antiguas
-              const { downloadMediaMessage } = require('@whiskeysockets/baileys');
-              imageBuffer = await downloadMediaMessage(
-                message.message.imageMessage,
-                'buffer',
-                {},
-                {
-                  logger: this.logger,
-                  reuploadRequest: this.socket.updateMediaMessage
-                }
-              );
-            }
+            // Usar la función downloadMediaMessage importada directamente
+            console.log('🔍 Debug - Usando downloadMediaMessage importada para imagen...');
+            imageBuffer = await downloadMediaMessage(
+              message.message.imageMessage,
+              'buffer',
+              {},
+              {
+                logger: this.logger,
+                reuploadRequest: this.socket.updateMediaMessage
+              }
+            );
             
             const imageBase64 = imageBuffer.toString('base64');
             
@@ -593,25 +585,17 @@ class WhatsAppController {
 
             console.log('🔍 Debug - Iniciando descarga de audio...');
             
-            // Usar la API correcta para Baileys 6.4.0
-            let audioBuffer;
-            if (typeof this.socket.downloadMediaMessage === 'function') {
-              audioBuffer = await this.socket.downloadMediaMessage(message.message.audioMessage);
-            } else if (typeof this.socket.downloadAndSaveMediaMessage === 'function') {
-              audioBuffer = await this.socket.downloadAndSaveMediaMessage(message.message.audioMessage);
-            } else {
-              // Método alternativo para versiones más antiguas
-              const { downloadMediaMessage } = require('@whiskeysockets/baileys');
-              audioBuffer = await downloadMediaMessage(
-                message.message.audioMessage,
-                'buffer',
-                {},
-                {
-                  logger: this.logger,
-                  reuploadRequest: this.socket.updateMediaMessage
-                }
-              );
-            }
+            // Usar la función downloadMediaMessage importada directamente
+            console.log('🔍 Debug - Usando downloadMediaMessage importada...');
+            audioBuffer = await downloadMediaMessage(
+              message.message.audioMessage,
+              'buffer',
+              {},
+              {
+                logger: this.logger,
+                reuploadRequest: this.socket.updateMediaMessage
+              }
+            );
             
             console.log('🔍 Debug - Audio descargado, tamaño:', audioBuffer.length, 'bytes');
             
@@ -675,25 +659,17 @@ class WhatsAppController {
           console.log('🔍 Debug - Mensaje de video detectado');
           
           try {
-            // Usar la API correcta para Baileys 6.4.0
-            let videoBuffer;
-            if (typeof this.socket.downloadMediaMessage === 'function') {
-              videoBuffer = await this.socket.downloadMediaMessage(message.message.videoMessage);
-            } else if (typeof this.socket.downloadAndSaveMediaMessage === 'function') {
-              videoBuffer = await this.socket.downloadAndSaveMediaMessage(message.message.videoMessage);
-            } else {
-              // Método alternativo para versiones más antiguas
-              const { downloadMediaMessage } = require('@whiskeysockets/baileys');
-              videoBuffer = await downloadMediaMessage(
-                message.message.videoMessage,
-                'buffer',
-                {},
-                {
-                  logger: this.logger,
-                  reuploadRequest: this.socket.updateMediaMessage
-                }
-              );
-            }
+            // Usar la función downloadMediaMessage importada directamente
+            console.log('🔍 Debug - Usando downloadMediaMessage importada para video...');
+            videoBuffer = await downloadMediaMessage(
+              message.message.videoMessage,
+              'buffer',
+              {},
+              {
+                logger: this.logger,
+                reuploadRequest: this.socket.updateMediaMessage
+              }
+            );
             
             const videoBase64 = videoBuffer.toString('base64');
             
@@ -740,25 +716,17 @@ class WhatsAppController {
           console.log('🔍 Debug - Mensaje de documento detectado');
           
           try {
-            // Usar la API correcta para Baileys 6.4.0
-            let docBuffer;
-            if (typeof this.socket.downloadMediaMessage === 'function') {
-              docBuffer = await this.socket.downloadMediaMessage(message.message.documentMessage);
-            } else if (typeof this.socket.downloadAndSaveMediaMessage === 'function') {
-              docBuffer = await this.socket.downloadAndSaveMediaMessage(message.message.documentMessage);
-            } else {
-              // Método alternativo para versiones más antiguas
-              const { downloadMediaMessage } = require('@whiskeysockets/baileys');
-              docBuffer = await downloadMediaMessage(
-                message.message.documentMessage,
-                'buffer',
-                {},
-                {
-                  logger: this.logger,
-                  reuploadRequest: this.socket.updateMediaMessage
-                }
-              );
-            }
+            // Usar la función downloadMediaMessage importada directamente
+            console.log('🔍 Debug - Usando downloadMediaMessage importada para documento...');
+            docBuffer = await downloadMediaMessage(
+              message.message.documentMessage,
+              'buffer',
+              {},
+              {
+                logger: this.logger,
+                reuploadRequest: this.socket.updateMediaMessage
+              }
+            );
             
             const docBase64 = docBuffer.toString('base64');
             
