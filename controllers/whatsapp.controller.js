@@ -472,58 +472,249 @@ class WhatsAppController {
       for (const message of messageData.messages) {
         console.log('🔍 Debug - Procesando mensaje individual:', JSON.stringify(message, null, 2));
         
-        // Solo procesar mensajes de texto
+        // Extraer el número real del remitente
+        let sender = message.key.remoteJid;
+        let senderName = message.pushName || 'Usuario';
+        
+        // Si es un mensaje de grupo, usar el participante real
+        if (message.key.participant) {
+          sender = message.key.participant;
+          // Extraer solo el número del participante (remover @lid)
+          const participantNumber = message.key.participant.split('@')[0];
+          sender = `${participantNumber}@s.whatsapp.net`;
+        }
+        
+        const timestamp = message.messageTimestamp;
+        const isFromMe = message.key.fromMe;
+
+        // No procesar mensajes de la API misma
+        if (isFromMe) {
+          console.log('🔍 Debug - Mensaje ignorado porque es de la API misma');
+          continue;
+        }
+
+        let messageInfo = null;
+
+        // Procesar mensajes de texto
         if (message.message?.conversation || message.message?.extendedTextMessage?.text) {
           const messageText = message.message.conversation || message.message.extendedTextMessage?.text;
           
-          // Extraer el número real del remitente
-          let sender = message.key.remoteJid;
-          let senderName = message.pushName || 'Usuario';
-          
-          // Si es un mensaje de grupo, usar el participante real
-          if (message.key.participant) {
-            sender = message.key.participant;
-            // Extraer solo el número del participante (remover @lid)
-            const participantNumber = message.key.participant.split('@')[0];
-            sender = `${participantNumber}@s.whatsapp.net`;
-          }
-          
-          const timestamp = message.messageTimestamp;
-          const isFromMe = message.key.fromMe;
-
           console.log('🔍 Debug - Mensaje de texto detectado:');
           console.log('🔍 Debug - Texto:', messageText);
           console.log('🔍 Debug - Remitente:', sender);
           console.log('🔍 Debug - Nombre:', senderName);
-          console.log('🔍 Debug - Es de mí:', isFromMe);
 
-          // No procesar mensajes de la API misma
-          if (!isFromMe) { // Solo procesar mensajes que NO sean de la API
-            const messageInfo = {
+          messageInfo = {
+            id: message.key.id,
+            text: messageText,
+            sender: sender,
+            senderName: senderName,
+            timestamp: timestamp,
+            isFromMe: isFromMe,
+            type: 'text',
+            receivedAt: new Date().toISOString()
+          };
+        }
+        // Procesar mensajes de imagen
+        else if (message.message?.imageMessage) {
+          console.log('🔍 Debug - Mensaje de imagen detectado');
+          
+          try {
+            const imageBuffer = await this.socket.downloadMediaMessage(message.message.imageMessage);
+            const imageBase64 = imageBuffer.toString('base64');
+            
+            messageInfo = {
               id: message.key.id,
-              text: messageText,
+              text: message.message.imageMessage.caption || '',
               sender: sender,
               senderName: senderName,
               timestamp: timestamp,
               isFromMe: isFromMe,
-              type: 'text',
-              receivedAt: new Date().toISOString()
+              type: 'image',
+              receivedAt: new Date().toISOString(),
+              media: {
+                type: 'image',
+                data: imageBase64,
+                mimeType: message.message.imageMessage.mimetype,
+                fileName: message.message.imageMessage.fileName || 'image.jpg',
+                fileSize: message.message.imageMessage.fileLength
+              }
             };
-
-            console.log('📨 Procesando mensaje:', messageInfo);
-
-            // Enviar webhook si está configurado
-            if (this.webhookUrl) {
-              console.log('🔍 Debug - Enviando webhook a:', this.webhookUrl);
-              await this.sendWebhook(messageInfo);
-            } else {
-              console.log('🔍 Debug - No hay webhook configurado');
-            }
-          } else {
-            console.log('🔍 Debug - Mensaje ignorado porque es de la API misma');
+            
+            console.log('🔍 Debug - Imagen descargada:', messageInfo.media.fileName, messageInfo.media.mimeType);
+          } catch (error) {
+            console.error('Error al descargar imagen:', error);
+            // Enviar mensaje sin el archivo si falla la descarga
+            messageInfo = {
+              id: message.key.id,
+              text: message.message.imageMessage.caption || '[Imagen]',
+              sender: sender,
+              senderName: senderName,
+              timestamp: timestamp,
+              isFromMe: isFromMe,
+              type: 'image',
+              receivedAt: new Date().toISOString(),
+              media: {
+                type: 'image',
+                error: 'No se pudo descargar la imagen'
+              }
+            };
           }
-        } else {
-          console.log('🔍 Debug - Mensaje no es de texto, ignorando');
+        }
+        // Procesar mensajes de audio (notas de voz)
+        else if (message.message?.audioMessage) {
+          console.log('🔍 Debug - Mensaje de audio detectado');
+          
+          try {
+            const audioBuffer = await this.socket.downloadMediaMessage(message.message.audioMessage);
+            const audioBase64 = audioBuffer.toString('base64');
+            
+            messageInfo = {
+              id: message.key.id,
+              text: '[Nota de voz]',
+              sender: sender,
+              senderName: senderName,
+              timestamp: timestamp,
+              isFromMe: isFromMe,
+              type: 'audio',
+              receivedAt: new Date().toISOString(),
+              media: {
+                type: 'audio',
+                data: audioBase64,
+                mimeType: message.message.audioMessage.mimetype,
+                fileName: message.message.audioMessage.fileName || 'audio.ogg',
+                fileSize: message.message.audioMessage.fileLength,
+                duration: message.message.audioMessage.seconds,
+                isVoiceNote: message.message.audioMessage.ptt || false
+              }
+            };
+            
+            console.log('🔍 Debug - Audio descargado:', messageInfo.media.fileName, messageInfo.media.mimeType, 'Duración:', messageInfo.media.duration + 's');
+          } catch (error) {
+            console.error('Error al descargar audio:', error);
+            // Enviar mensaje sin el archivo si falla la descarga
+            messageInfo = {
+              id: message.key.id,
+              text: '[Nota de voz]',
+              sender: sender,
+              senderName: senderName,
+              timestamp: timestamp,
+              isFromMe: isFromMe,
+              type: 'audio',
+              receivedAt: new Date().toISOString(),
+              media: {
+                type: 'audio',
+                error: 'No se pudo descargar el audio'
+              }
+            };
+          }
+        }
+        // Procesar mensajes de video
+        else if (message.message?.videoMessage) {
+          console.log('🔍 Debug - Mensaje de video detectado');
+          
+          try {
+            const videoBuffer = await this.socket.downloadMediaMessage(message.message.videoMessage);
+            const videoBase64 = videoBuffer.toString('base64');
+            
+            messageInfo = {
+              id: message.key.id,
+              text: message.message.videoMessage.caption || '[Video]',
+              sender: sender,
+              senderName: senderName,
+              timestamp: timestamp,
+              isFromMe: isFromMe,
+              type: 'video',
+              receivedAt: new Date().toISOString(),
+              media: {
+                type: 'video',
+                data: videoBase64,
+                mimeType: message.message.videoMessage.mimetype,
+                fileName: message.message.videoMessage.fileName || 'video.mp4',
+                fileSize: message.message.videoMessage.fileLength,
+                duration: message.message.videoMessage.seconds
+              }
+            };
+            
+            console.log('🔍 Debug - Video descargado:', messageInfo.media.fileName, messageInfo.media.mimeType);
+          } catch (error) {
+            console.error('Error al descargar video:', error);
+            messageInfo = {
+              id: message.key.id,
+              text: message.message.videoMessage.caption || '[Video]',
+              sender: sender,
+              senderName: senderName,
+              timestamp: timestamp,
+              isFromMe: isFromMe,
+              type: 'video',
+              receivedAt: new Date().toISOString(),
+              media: {
+                type: 'video',
+                error: 'No se pudo descargar el video'
+              }
+            };
+          }
+        }
+        // Procesar documentos
+        else if (message.message?.documentMessage) {
+          console.log('🔍 Debug - Mensaje de documento detectado');
+          
+          try {
+            const docBuffer = await this.socket.downloadMediaMessage(message.message.documentMessage);
+            const docBase64 = docBuffer.toString('base64');
+            
+            messageInfo = {
+              id: message.key.id,
+              text: message.message.documentMessage.caption || '[Documento]',
+              sender: sender,
+              senderName: senderName,
+              timestamp: timestamp,
+              isFromMe: isFromMe,
+              type: 'document',
+              receivedAt: new Date().toISOString(),
+              media: {
+                type: 'document',
+                data: docBase64,
+                mimeType: message.message.documentMessage.mimetype,
+                fileName: message.message.documentMessage.fileName || 'document.pdf',
+                fileSize: message.message.documentMessage.fileLength
+              }
+            };
+            
+            console.log('🔍 Debug - Documento descargado:', messageInfo.media.fileName, messageInfo.media.mimeType);
+          } catch (error) {
+            console.error('Error al descargar documento:', error);
+            messageInfo = {
+              id: message.key.id,
+              text: message.message.documentMessage.caption || '[Documento]',
+              sender: sender,
+              senderName: senderName,
+              timestamp: timestamp,
+              isFromMe: isFromMe,
+              type: 'document',
+              receivedAt: new Date().toISOString(),
+              media: {
+                type: 'document',
+                error: 'No se pudo descargar el documento'
+              }
+            };
+          }
+        }
+        else {
+          console.log('🔍 Debug - Tipo de mensaje no soportado:', Object.keys(message.message || {}));
+          continue;
+        }
+
+        if (messageInfo) {
+          console.log('📨 Procesando mensaje:', messageInfo.type, messageInfo.text);
+
+          // Enviar webhook si está configurado
+          if (this.webhookUrl) {
+            console.log('🔍 Debug - Enviando webhook a:', this.webhookUrl);
+            await this.sendWebhook(messageInfo);
+          } else {
+            console.log('🔍 Debug - No hay webhook configurado');
+          }
         }
       }
     } catch (error) {
