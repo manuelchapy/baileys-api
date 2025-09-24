@@ -176,4 +176,34 @@ router.post('/webhook', async (req, res) => {
   }
 });
 
+// POST /api/whatsapp/test-webhook - Probar webhook con datos de ejemplo
+router.post('/test-webhook', async (req, res) => {
+  try {
+    const testMessage = {
+      id: 'TEST_MESSAGE_ID',
+      text: 'Mensaje de prueba desde la API',
+      sender: '584247713952@s.whatsapp.net',
+      senderName: 'Usuario de Prueba',
+      timestamp: Math.floor(Date.now() / 1000),
+      isFromMe: false,
+      type: 'text',
+      receivedAt: new Date().toISOString()
+    };
+
+    await whatsappController.sendWebhook(testMessage);
+    
+    res.json({
+      status: 'success',
+      message: 'Webhook de prueba enviado exitosamente',
+      testData: testMessage
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: 'Error al enviar webhook de prueba',
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;

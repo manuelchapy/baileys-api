@@ -535,19 +535,32 @@ class WhatsAppController {
     try {
       const axios = require('axios');
       
-      await axios.post(this.webhookUrl, {
+      console.log('🔍 Debug - Enviando webhook a:', this.webhookUrl);
+      console.log('🔍 Debug - Datos del webhook:', JSON.stringify({
+        event: 'message.received',
+        data: messageData
+      }, null, 2));
+      
+      const response = await axios.post(this.webhookUrl, {
         event: 'message.received',
         data: messageData
       }, {
-        timeout: 5000,
+        timeout: 10000,
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'User-Agent': 'Baileys-API/1.0.0'
         }
       });
 
       console.log('🔗 Webhook enviado exitosamente');
+      console.log('🔍 Debug - Respuesta del webhook:', response.status, response.data);
     } catch (error) {
       console.error('Error al enviar webhook:', error.message);
+      if (error.response) {
+        console.error('🔍 Debug - Status del error:', error.response.status);
+        console.error('🔍 Debug - Datos del error:', error.response.data);
+        console.error('🔍 Debug - Headers del error:', error.response.headers);
+      }
     }
   }
 }
