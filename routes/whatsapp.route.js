@@ -206,4 +206,44 @@ router.post('/test-webhook', async (req, res) => {
   }
 });
 
+// POST /api/whatsapp/test-audio-webhook - Probar webhook con audio de ejemplo
+router.post('/test-audio-webhook', async (req, res) => {
+  try {
+    const testAudioMessage = {
+      id: 'TEST_AUDIO_MESSAGE_ID',
+      text: '[Nota de voz]',
+      sender: '584247713952@s.whatsapp.net',
+      senderName: 'Usuario de Prueba',
+      timestamp: Math.floor(Date.now() / 1000),
+      isFromMe: false,
+      type: 'audio',
+      receivedAt: new Date().toISOString(),
+      media: {
+        type: 'audio',
+        data: 'UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWTgwOUarm7blmGgE=',
+        mimeType: 'audio/ogg',
+        fileName: 'test_audio.ogg',
+        fileSize: 1024,
+        duration: 5,
+        isVoiceNote: true,
+        base64Length: 1368
+      }
+    };
+
+    await whatsappController.sendWebhook(testAudioMessage);
+    
+    res.json({
+      status: 'success',
+      message: 'Webhook de audio de prueba enviado exitosamente',
+      testData: testAudioMessage
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: 'Error al enviar webhook de audio de prueba',
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;

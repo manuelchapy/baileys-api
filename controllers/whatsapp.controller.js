@@ -564,10 +564,20 @@ class WhatsAppController {
         // Procesar mensajes de audio (notas de voz)
         else if (message.message?.audioMessage) {
           console.log('🔍 Debug - Mensaje de audio detectado');
+          console.log('🔍 Debug - Audio message data:', JSON.stringify(message.message.audioMessage, null, 2));
           
           try {
+            // Verificar que el socket esté disponible
+            if (!this.socket) {
+              throw new Error('Socket no disponible');
+            }
+
+            console.log('🔍 Debug - Iniciando descarga de audio...');
             const audioBuffer = await this.socket.downloadMediaMessage(message.message.audioMessage);
+            console.log('🔍 Debug - Audio descargado, tamaño:', audioBuffer.length, 'bytes');
+            
             const audioBase64 = audioBuffer.toString('base64');
+            console.log('🔍 Debug - Audio convertido a base64, longitud:', audioBase64.length);
             
             messageInfo = {
               id: message.key.id,
@@ -581,18 +591,22 @@ class WhatsAppController {
               media: {
                 type: 'audio',
                 data: audioBase64,
-                mimeType: message.message.audioMessage.mimetype,
+                mimeType: message.message.audioMessage.mimetype || 'audio/ogg',
                 fileName: message.message.audioMessage.fileName || 'audio.ogg',
-                fileSize: message.message.audioMessage.fileLength,
-                duration: message.message.audioMessage.seconds,
-                isVoiceNote: message.message.audioMessage.ptt || false
+                fileSize: message.message.audioMessage.fileLength || audioBuffer.length,
+                duration: message.message.audioMessage.seconds || 0,
+                isVoiceNote: message.message.audioMessage.ptt || false,
+                base64Length: audioBase64.length
               }
             };
             
-            console.log('🔍 Debug - Audio descargado:', messageInfo.media.fileName, messageInfo.media.mimeType, 'Duración:', messageInfo.media.duration + 's');
+            console.log('🔍 Debug - Audio procesado exitosamente:', messageInfo.media.fileName, messageInfo.media.mimeType, 'Duración:', messageInfo.media.duration + 's');
           } catch (error) {
             console.error('Error al descargar audio:', error);
-            // Enviar mensaje sin el archivo si falla la descarga
+            console.error('Error details:', error.message);
+            console.error('Error stack:', error.stack);
+            
+            // Enviar mensaje con información del error
             messageInfo = {
               id: message.key.id,
               text: '[Nota de voz]',
@@ -604,7 +618,15 @@ class WhatsAppController {
               receivedAt: new Date().toISOString(),
               media: {
                 type: 'audio',
-                error: 'No se pudo descargar el audio'
+                error: 'No se pudo descargar el audio',
+                errorDetails: error.message,
+                audioMessageData: {
+                  mimetype: message.message.audioMessage.mimetype,
+                  fileName: message.message.audioMessage.fileName,
+                  fileLength: message.message.audioMessage.fileLength,
+                  seconds: message.message.audioMessage.seconds,
+                  ptt: message.message.audioMessage.ptt
+                }
               }
             };
           }
