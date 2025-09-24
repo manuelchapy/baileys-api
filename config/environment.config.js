@@ -3,15 +3,15 @@ require('dotenv').config();
 const config = {
   // Configuración del servidor
   server: {
-    port: process.env.PORT || 3000,
-    host: process.env.HOST || 'localhost',
+    port: process.env.PORT || 8080,
+    host: process.env.HOST || '0.0.0.0',
     nodeEnv: process.env.NODE_ENV || 'development'
   },
 
   // URLs de la API
   api: {
     url: process.env.API_URL || (process.env.NODE_ENV === 'production' 
-      ? 'https://tu-proyecto.vercel.app' 
+      ? 'https://content-charisma-production.up.railway.app' 
       : 'http://localhost:3000')
   },
 
