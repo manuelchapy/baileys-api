@@ -471,7 +471,7 @@ class WhatsAppController {
 
       for (const message of messageData.messages) {
         console.log('🔍 Debug - Procesando mensaje individual:', JSON.stringify(message, null, 2));
-        
+          
           // Extraer el número real del remitente
           let sender = message.key.remoteJid;
           let senderName = message.pushName || 'Usuario';
@@ -522,7 +522,7 @@ class WhatsAppController {
           try {
             // Usar la función downloadMediaMessage importada directamente
             console.log('🔍 Debug - Usando downloadMediaMessage importada para imagen...');
-            imageBuffer = await downloadMediaMessage(
+            const imageBuffer = await downloadMediaMessage(
               message, // Pasar el mensaje completo, no solo imageMessage
               'buffer',
               {},
@@ -589,7 +589,7 @@ class WhatsAppController {
             console.log('🔍 Debug - Usando downloadMediaMessage importada...');
             console.log('🔍 Debug - Mensaje completo:', JSON.stringify(message, null, 2));
             
-            audioBuffer = await downloadMediaMessage(
+            const audioBuffer = await downloadMediaMessage(
               message, // Pasar el mensaje completo, no solo audioMessage
               'buffer',
               {},
@@ -663,7 +663,7 @@ class WhatsAppController {
           try {
             // Usar la función downloadMediaMessage importada directamente
             console.log('🔍 Debug - Usando downloadMediaMessage importada para video...');
-            videoBuffer = await downloadMediaMessage(
+            const videoBuffer = await downloadMediaMessage(
               message, // Pasar el mensaje completo, no solo videoMessage
               'buffer',
               {},
@@ -720,7 +720,7 @@ class WhatsAppController {
           try {
             // Usar la función downloadMediaMessage importada directamente
             console.log('🔍 Debug - Usando downloadMediaMessage importada para documento...');
-            docBuffer = await downloadMediaMessage(
+            const docBuffer = await downloadMediaMessage(
               message, // Pasar el mensaje completo, no solo documentMessage
               'buffer',
               {},
